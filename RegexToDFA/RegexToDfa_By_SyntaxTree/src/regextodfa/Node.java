@@ -99,6 +99,7 @@ public class Node {
     public void addAllToLastPos(Set set) {
         lastPos.addAll(set);
     }
+    
 
     /**
      * @return the firstPos
@@ -106,6 +107,9 @@ public class Node {
     public Set<Integer> getFirstPos() {
         return firstPos;
     }
+
+    
+    
 
     /**
      * @return the lastPos

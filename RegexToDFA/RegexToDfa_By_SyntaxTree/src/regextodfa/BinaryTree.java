@@ -39,7 +39,7 @@ class BinaryTree {
     // Generates tree using the regular expression and returns it's root
     public Node generateTree(String regular) {
 
-        Character[] ops = {'*', '|', '&'};
+        Character[] ops = {'*', '|', '&','?'};
         op.addAll(Arrays.asList(ops));
 
         // Only inputs available
@@ -49,7 +49,7 @@ class BinaryTree {
             ch[i - 65 + 26] = (char) (i + 32);
         }
         Character integer[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-        Character others[] = {'#','\\', '=', '_', '.', '*', '/', '+', '-', ' ', '(', ')'};
+        Character others[] = {'#','\\', '=', '_', '.', '*', '/', '+', '-', ' ', '(', ')','?'};
         input.addAll(Arrays.asList(ch));
         input.addAll(Arrays.asList(integer));
         input.addAll(Arrays.asList(others));
@@ -116,10 +116,17 @@ class BinaryTree {
         if (first == second) {
             return true;
         }
+        
         if (first == '*') {
             return false;
         }
         if (second == '*') {
+            return true;
+        }
+        if (first == '?') {
+            return false;
+        }
+        if (second == '?') {
             return true;
         }
         if (first == '&') {
@@ -147,6 +154,10 @@ class BinaryTree {
                 case ('&'):
                     concatenation();
                     break;
+                
+                case ('?'):
+                    questionMark();
+                    break;
 
                 case ('*'):
                     star();
@@ -160,6 +171,20 @@ class BinaryTree {
             }
         }
     }
+
+    private void questionMark() {
+        // Retrieve top Node from Stack
+        Node node = stackNode.pop();
+    
+        Node root = new Node("?");
+        root.setLeft(node);
+        root.setRight(null);
+        node.setParent(root);
+    
+        // Put node back in the stackNode
+        stackNode.push(root);
+    }
+    
 
     // Do the star operation
     private void star() {
@@ -247,7 +272,14 @@ class BinaryTree {
             } else if (regular.charAt(i) == ')' && isInputCharacter(regular.charAt(i + 1))) {
                 newRegular += regular.charAt(i) + "&";
 
-            } else if (regular.charAt(i) == '*' && isInputCharacter(regular.charAt(i + 1))) {
+            }else if (regular.charAt(i) == '?' && isInputCharacter(regular.charAt(i + 1))) {
+                newRegular += regular.charAt(i) + "&";
+
+            } else if (regular.charAt(i) == '?' && regular.charAt(i + 1) == '(') {
+                newRegular += regular.charAt(i) + "&";
+
+            }
+             else if (regular.charAt(i) == '*' && isInputCharacter(regular.charAt(i + 1))) {
                 newRegular += regular.charAt(i) + "&";
 
             } else if (regular.charAt(i) == '*' && regular.charAt(i + 1) == '(') {

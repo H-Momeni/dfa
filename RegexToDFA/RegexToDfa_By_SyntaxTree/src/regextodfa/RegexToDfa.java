@@ -46,6 +46,9 @@ public class RegexToDfa {
          */
         SyntaxTree st = new SyntaxTree(regex);
         root = st.getRoot(); //root of the syntax tree
+
+        st.printSyntaxTree(st.getRoot());
+        System.out.println(" ");
         followPos = st.getFollowPos(); //the followpos of the syntax tree
 
         /**
@@ -87,7 +90,7 @@ public class RegexToDfa {
          * could be a closure operator
          */
         Set<Character> op = new HashSet<>();
-        Character[] ch = {'(', ')', '*', '|', '&', '.', '\\', '[', ']', '+'};
+        Character[] ch = {'(', ')','?', '*', '|', '&', '.', '\\', '[', ']', '+'};
         op.addAll(Arrays.asList(ch));
 
         input = new HashSet<>();
