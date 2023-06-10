@@ -3,6 +3,9 @@ package regextodfa;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -16,14 +19,15 @@ public class RegexToDfa {
     private static Node root;
     private static Set<State> DStates;
 
-    private static Set<String> input; //set of characters is used in input regex
+    private static Set<String> input; // set of characters is used in input regex
 
     /**
      * a number is assigned to each characters (even duplicate ones)
      *
      * @param symbNum is a hash map has a key which mentions the number and has
-     * a value which mentions the corresponding character or sometimes a string
-     * for characters is followed up by backslash like "\*"
+     *                a value which mentions the corresponding character or
+     *                sometimes a string
+     *                for characters is followed up by backslash like "\*"
      */
     private static HashMap<Integer, String> symbNum;
 
@@ -33,11 +37,13 @@ public class RegexToDfa {
 
     public static void initialize() {
         Scanner in = new Scanner(System.in);
-        //allocating
+        // allocating
         DStates = new HashSet<>();
         input = new HashSet<String>();
 
         String regex = getRegex(in);
+        String regex2 = getRegex(in);
+
         getSymbols(regex);
 
         /**
@@ -45,11 +51,11 @@ public class RegexToDfa {
          * syntax tree of the regular expression in it
          */
         SyntaxTree st = new SyntaxTree(regex);
-        root = st.getRoot(); //root of the syntax tree
+        root = st.getRoot(); // root of the syntax tree
 
         st.printSyntaxTree(st.getRoot());
         System.out.println(" ");
-        followPos = st.getFollowPos(); //the followpos of the syntax tree
+        followPos = st.getFollowPos(); // the followpos of the syntax tree
 
         /**
          * creating the DFA using the syntax tree were created upside and
@@ -59,7 +65,15 @@ public class RegexToDfa {
         DfaTraversal dfat = new DfaTraversal(q0, input);
 
         q0.printDFA();
-        
+        String[][] transitionQ = convertStatesToArray(q0);
+      //  System.out.println(transitionQ[0].length);
+        for (int i = 0; i < transitionQ.length; i++) {
+            System.out.print("\nq" + i + "->" );
+            for (int j = 0; j < transitionQ[0].length; j++) {
+                System.out.print( transitionQ[i][j] + " ,");
+            }
+        }
+
         String str = getStr(in);
         boolean acc = false;
         for (char c : str.toCharArray()) {
@@ -81,7 +95,8 @@ public class RegexToDfa {
     private static String getRegex(Scanner in) {
         System.out.print("Enter a regex: ");
         String regex = in.nextLine();
-        return regex+"#";
+        // return regex;
+        return regex + "#";
     }
 
     private static void getSymbols(String regex) {
@@ -90,7 +105,7 @@ public class RegexToDfa {
          * could be a closure operator
          */
         Set<Character> op = new HashSet<>();
-        Character[] ch = {'(', ')','?', '*', '|', '&', '.', '\\', '[', ']', '+'};
+        Character[] ch = { '(', ')', '?', '*', '|', '&', '.', '\\', '[', ']', '+' };
         op.addAll(Arrays.asList(ch));
 
         input = new HashSet<>();
@@ -144,7 +159,7 @@ public class RegexToDfa {
             if (s.getIsMarked()) {
                 continue;
             }
-            s.setIsMarked(true); //mark the state
+            s.setIsMarked(true); // mark the state
             Set<Integer> name = s.getName();
             for (String a : input) {
                 Set<Integer> U = new HashSet<>();
@@ -153,6 +168,7 @@ public class RegexToDfa {
                         U.addAll(followPos[p - 1]);
                     }
                 }
+
                 boolean flag = false;
                 State tmp = null;
                 for (State state : DStates) {
@@ -183,6 +199,81 @@ public class RegexToDfa {
         String str;
         str = in.nextLine();
         return str;
+    }
+
+    public static String[][] convertStatesToArray(State q0) {
+        Set<State> visited = new HashSet<>();
+        Queue<State> queue = new LinkedList<>();
+        queue.add(q0);
+
+        // Collect all unique symbols used in transitions
+        Set<String> symbols = new HashSet<>();
+
+        while (!queue.isEmpty()) {
+            State state = queue.poll();
+            if (!visited.contains(state)) {
+                visited.add(state);
+                HashMap<String, State> moves = state.getAllMoves();
+                for (String symbol : moves.keySet()) {
+                    symbols.add(symbol);
+                }
+                queue.addAll(moves.values());
+            }
+        }
+
+        // Convert symbols set to an array
+        String[] alphabet = symbols.toArray(new String[0]);
+        Arrays.sort(alphabet);
+
+        // Create the transitions array
+        int numStates = visited.size();
+        int numSymbols = alphabet.length;
+        String[][] transitions = new String[numStates][numSymbols];
+
+        // Initialize the transitions array
+        visited.clear();
+        queue.add(q0);
+        visited.add(q0);
+
+        // Process each state and its transitions
+        while (!queue.isEmpty()) {
+            State state = queue.poll();
+            int currentStateIndex = state.getID();
+
+            HashMap<String, State> moves = state.getAllMoves();
+            for (Map.Entry<String, State> entry : moves.entrySet()) {
+                String symbol = entry.getKey();
+                State nextState = entry.getValue();
+                int symbolIndex = Arrays.binarySearch(alphabet, symbol);
+                int nextStateIndex = nextState.getID();
+                transitions[currentStateIndex][symbolIndex] = "q" + nextStateIndex;
+                if (!visited.contains(nextState)) {
+                    visited.add(nextState);
+                    queue.add(nextState);
+                }
+
+            }
+
+        }
+
+        // Print the transitions array
+        System.out.println("Transitions:");
+        for (int i = 0; i < numStates; i++) {
+            for (int j = 0; j < numSymbols; j++) {
+                String transition = transitions[i][j] != null ? transitions[i][j] : "-";
+                System.out.printf("q%d -> %s: %s\n", i, alphabet[j], transition);
+            }
+        }
+
+        String[][] tr = new String[numStates][numSymbols - 1];
+        for (int i = 0; i < numStates; i++) {
+            for (int j = 1; j < numSymbols; j++) {
+                tr[i][j - 1] = transitions[i][j];
+            }
+        }
+
+        return tr;
+
     }
 
 }

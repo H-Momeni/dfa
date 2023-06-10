@@ -258,6 +258,8 @@ class BinaryTree {
              *#  * & a
              *#  * & (
              *#  ) & (
+                ? & (
+                ? & a
              */
             if (regular.charAt(i) == '\\' && isInputCharacter(regular.charAt(i + 1))) {
                 newRegular += regular.charAt(i);

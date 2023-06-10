@@ -1,6 +1,7 @@
 package regextodfa;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -18,15 +19,16 @@ public class SyntaxTree {
     public SyntaxTree(String regex) {
         this.regex = regex;
         bt = new BinaryTree();
-        
 
         /**
          * generates the binary tree of the syntax tree
          */
         root = bt.generateTree(regex);
-        /*System.out.println("here");
-        bt.printInorder(root);
-        System.out.println("fi");*/
+        /*
+         * System.out.println("here");
+         * bt.printInorder(root);
+         * System.out.println("fi");
+         */
         numOfLeafs = bt.getNumberOfLeafs();
         followPos = new Set[numOfLeafs];
         for (int i = 0; i < numOfLeafs; i++) {
@@ -103,6 +105,7 @@ public class SyntaxTree {
                 case "?":
                     node.addAllToFirstPos(left.getFirstPos());
                     node.addAllToLastPos(left.getLastPos());
+                    
                     break;
                 case "*":
                     node.addAllToFirstPos(left.getFirstPos());
@@ -127,31 +130,38 @@ public class SyntaxTree {
                 }
                 break;
 
-          case "?":
-                // Add logic for "?" character
+                case "?":
                 Object lastpos_q[] = node.getLastPos().toArray();
+                Set<Integer> firstpos_q = node.getFirstPos();
                 for (int i = 0; i < lastpos_q.length; i++) {
                     int index = (Integer) lastpos_q[i] - 1;
                     if (index >= 0 && index < followPos.length) {
-                        // If the "?" character is optional, add the firstPos to followPos
-                        followPos[index].addAll(node.getFirstPos());
+                        followPos[index].addAll(firstpos_q);
                     }
                 }
-                break; 
+                break;
 
-              /*   case "?":
-                Object lastpos_m[] = node.getLastPos().toArray();
-                Set<Integer> firstpos_m = node.getFirstPos();
-                for (int i = 0; i < lastpos_m.length; i++) {
-                    followPos[(Integer) lastpos_m[i] - 1].addAll(firstpos_m);
-                }
-                break;*/ 
+            /*
+             * case "?":
+             * Object lastpos_m[] = node.getLastPos().toArray();
+             * Set<Integer> firstpos_m = node.getFirstPos();
+             * for (int i = 0; i < lastpos_m.length; i++) {
+             * followPos[(Integer) lastpos_m[i] - 1].addAll(firstpos_m);
+             * }
+             * break;
+             */
 
             case "*":
+        
                 Object lastpos_n[] = node.getLastPos().toArray();
                 Set<Integer> firstpos_n = node.getFirstPos();
+               // Iterator itr = firstpos_n.iterator();
                 for (int i = 0; i < lastpos_n.length; i++) {
+
                     
+                    /*while (itr.hasNext()) {
+                        System.out.println(itr.next());
+                    }*/
                     followPos[(Integer) lastpos_n[i] - 1].addAll(firstpos_n);
                 }
                 break;
@@ -189,15 +199,15 @@ public class SyntaxTree {
         if (node == null) {
             return;
         }
-        
+
         // Print left subtree
         printSyntaxTree(node.getLeft());
-        
+
         // Print node's symbol
         System.out.print(node.getSymbol() + " ");
-        
+
         // Print right subtree
         printSyntaxTree(node.getRight());
     }
-    
+
 }
