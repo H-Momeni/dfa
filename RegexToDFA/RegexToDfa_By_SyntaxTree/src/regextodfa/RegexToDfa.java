@@ -68,14 +68,33 @@ public class RegexToDfa {
         q0.printDFA();
         p0.printDFA();
 
-        // String[][] transitionQ = convertStatesToArray(q0);
-        // // System.out.println(transitionQ[0].length);
-        // for (int i = 0; i < transitionQ.length; i++) {
-        //     System.out.print("\nq" + i + "->");
-        //     for (int j = 0; j < transitionQ[0].length; j++) {
-        //         System.out.print(transitionQ[i][j] + " ,");
-        //     }
-        // }
+        String[][] transitionQ = convertStatesToArray(q0);
+        String[][] transitionP=convertStatesToArray(p0);
+        // System.out.println(transitionQ[0].length);
+        for (int i = 0; i < transitionQ.length; i++) {
+            System.out.print("\nq" + i + "->");
+            for (int j = 0; j < transitionQ[0].length; j++) {
+                System.out.print(transitionQ[i][j] + " ,");
+                
+            }
+        }
+
+        for (int i = 0; i < transitionP.length; i++) {
+            System.out.print("\np" + i + "->");
+            for (int j = 0; j < transitionP[0].length; j++) {
+                System.out.print(transitionP[i][j] + " ,");
+                
+            }
+        }
+
+        String[] arr=q0.getAccept();
+        String[] arr2=p0.getAccept();
+
+        q0.equalRegex(arr, arr2, transitionQ, transitionP);
+
+
+        // for (String x : arr)
+        //     System.out.print("he:"+x + " ");
 
         // String str = getStr(in);
         // boolean acc = false;
@@ -88,11 +107,9 @@ public class RegexToDfa {
         // }
         // }
         // if (acc) {
-        // System.out.println((char) 27 + "[32m" + "this string is acceptable by the
-        // regex!");
+        // System.out.println((char) 27 + "[32m" + "this string is acceptable by the        regex!");
         // } else {
-        // System.out.println((char) 27 + "[31m" + "this string is not acceptable by the
-        // regex!");
+        // System.out.println((char) 27 + "[31m" + "this string is not acceptable by the        regex!");
         // }
         // in.close();
     }
@@ -357,13 +374,13 @@ public class RegexToDfa {
         }
 
         // Print the transitions array
-        System.out.println("Transitions:");
-        for (int i = 0; i < numStates; i++) {
-            for (int j = 0; j < numSymbols; j++) {
-                String transition = transitions[i][j] != null ? transitions[i][j] : "-";
-                System.out.printf("q%d -> %s: %s\n", i, alphabet[j], transition);
-            }
-        }
+        // System.out.println("Transitions:");
+        // for (int i = 0; i < numStates; i++) {
+        // for (int j = 0; j < numSymbols; j++) {
+        // String transition = transitions[i][j] != null ? transitions[i][j] : "-";
+        // System.out.printf("q%d -> %s: %s\n", i, alphabet[j], transition);
+        // }
+        // }
 
         String[][] tr = new String[numStates][numSymbols - 1];
         for (int i = 0; i < numStates; i++) {
