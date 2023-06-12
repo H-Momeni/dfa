@@ -1,24 +1,17 @@
 package regextodfa;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 public class RegexToDfa {
 
     private static Set<Integer>[] followPos;
     private static Node root;
-    private static Set<State> DStates;
+    private static ArrayList<State> DStates;
     private static Set<String> input; // set of characters is used in input regex
 
     private static Set<Integer>[] followPos2;
     private static Node root2;
-    private static Set<State> DStates2;
+    private static ArrayList<State> DStates2;
     private static Set<String> input2;
 
     private static HashMap<Integer, String> symbNum;
@@ -32,10 +25,10 @@ public class RegexToDfa {
     public static void initialize() {
         Scanner in = new Scanner(System.in);
         // allocating
-        DStates = new HashSet<>();
+        DStates = new ArrayList<State>();
         input = new HashSet<String>();
 
-        DStates2 = new HashSet<>();
+        DStates2 = new ArrayList<State>();
         input2 = new HashSet<String>();
 
         String regex = getRegex(in);
@@ -68,14 +61,14 @@ public class RegexToDfa {
         q0.printDFA();
         p0.printDFA();
 
-        String[][] transitionQ = convertStatesToArray(q0);
-        String[][] transitionP=convertStatesToArray(p0);
+       /* String[][] transitionQ = convertStatesToArray(q0);
+        String[][] transitionP = convertStatesToArray(p0);
         // System.out.println(transitionQ[0].length);
         for (int i = 0; i < transitionQ.length; i++) {
             System.out.print("\nq" + i + "->");
             for (int j = 0; j < transitionQ[0].length; j++) {
                 System.out.print(transitionQ[i][j] + " ,");
-                
+
             }
         }
 
@@ -83,14 +76,77 @@ public class RegexToDfa {
             System.out.print("\np" + i + "->");
             for (int j = 0; j < transitionP[0].length; j++) {
                 System.out.print(transitionP[i][j] + " ,");
-                
+
             }
         }
-
-        String[] arr=q0.getAccept();
-        String[] arr2=p0.getAccept();
-
-        q0.equalRegex(arr, arr2, transitionQ, transitionP);
+        String[] arr = new String[DStates.size()];
+        String[] arr2 = new String[DStates2.size()];
+        for (int i = 0; i < DStates.size(); i++) {
+            if(DStates.get(i).getIsAcceptable()){
+                arr[i]="q" + DStates.get(i).getID();
+            }
+        }
+        for (int i = 0; i < DStates2.size(); i++) {
+            if(DStates.get(i).getIsAcceptable()){
+                arr2[i]="p" + DStates2.get(i).getID();
+            }
+        }*/
+        ArrayList<String> keymoves = new ArrayList<>();
+        HashMap<String, State> moves = q0.getAllMoves();
+        for (Map.Entry<String, State> entry : moves.entrySet()) {
+            keymoves.add(entry.getKey());
+        }
+        State[][] table = new State[10][10];
+        State[][] table2 = new State[10][10];
+        table[0][0]=q0;
+        table[0][1]=p0;
+        int j=1;
+        int h=1;
+        int o=0;
+        while (true){
+            for (int i = 0; i < keymoves.size(); i++) {
+                State one =table[o][0].getNextStateBySymbol(keymoves.get(i));
+                State two =table[o][1].getNextStateBySymbol(keymoves.get(i));
+                if(check(table,j,one,two)){
+                    table[h][0]=one;
+                    table[h][1]=two;
+                    h++;
+                    j++;
+                }
+            }
+            o++;
+            if(table[o][0]==null){
+                break;
+            }
+        }
+        if(check_equal(table,j)){
+            System.out.println("two language is equal!!");
+        }else{
+            System.out.println("two language is not equal!!");
+        }
+        for (int i = 0; i < j; i++) {
+            System.out.println("q"+table[i][0].getID()+", "+"p"+table[i][1].getID());
+        }
+        }
+        public static boolean check_equal(State[][] x,int j){
+            for (int i = 0; i < j; i++) {
+                if(x[i][0].getIsAcceptable() && !x[i][1].getIsAcceptable()) {
+                    return false ;
+                }else if(!x[i][0].getIsAcceptable() && x[i][1].getIsAcceptable()){
+                    return false ;
+                }
+            }
+            return true;
+        }
+        public static boolean check(State[][] x, int j, State one, State two){
+            for (int i = 0; i < j; i++) {
+                if(x[i][0]==one && x[i][1]==two) {
+                    return false ;
+                }
+            }
+            return true;
+        }
+        //q0.equalRegex(arr, arr2, transitionQ, transitionP);
 
 
         // for (String x : arr)
@@ -112,13 +168,13 @@ public class RegexToDfa {
         // System.out.println((char) 27 + "[31m" + "this string is not acceptable by the        regex!");
         // }
         // in.close();
-    }
+    //}
 
     private static String getRegex(Scanner in) {
         System.out.print("Enter a regex: ");
         String regex = in.nextLine();
         // return regex;
-        return regex + "#";
+        return regex +"#";
     }
 
     private static void getSymbols(String regex) {
@@ -318,7 +374,7 @@ public class RegexToDfa {
         return str;
     }
 
-    public static String[][] convertStatesToArray(State q0) {
+    /*public static String[][] convertStatesToArray(State q0) {
         Set<State> visited = new HashSet<>();
         Queue<State> queue = new LinkedList<>();
         queue.add(q0);
@@ -391,6 +447,6 @@ public class RegexToDfa {
 
         return tr;
 
-    }
+    }*/
 
 }
