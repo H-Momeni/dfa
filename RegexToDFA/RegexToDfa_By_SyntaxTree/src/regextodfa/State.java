@@ -74,7 +74,7 @@ public class State {
         return ID;
     }
 
-    public String[] getAccept() {
+    /*public String[] getAccept() {
         List<String> list = new LinkedList<String>();
         Set<State> visited = new HashSet<>();
         Queue<State> queue = new LinkedList<>();
@@ -117,7 +117,7 @@ public class State {
         for (int i = 0; i < symbol; i++){
             List<String> sublist = new ArrayList<>();
 
-        }
+        }*/
         
 
 
