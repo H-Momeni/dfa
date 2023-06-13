@@ -61,36 +61,7 @@ public class RegexToDfa {
         q0.printDFA();
         p0.printDFA();
 
-       /* String[][] transitionQ = convertStatesToArray(q0);
-        String[][] transitionP = convertStatesToArray(p0);
-        // System.out.println(transitionQ[0].length);
-        for (int i = 0; i < transitionQ.length; i++) {
-            System.out.print("\nq" + i + "->");
-            for (int j = 0; j < transitionQ[0].length; j++) {
-                System.out.print(transitionQ[i][j] + " ,");
-
-            }
-        }
-
-        for (int i = 0; i < transitionP.length; i++) {
-            System.out.print("\np" + i + "->");
-            for (int j = 0; j < transitionP[0].length; j++) {
-                System.out.print(transitionP[i][j] + " ,");
-
-            }
-        }
-        String[] arr = new String[DStates.size()];
-        String[] arr2 = new String[DStates2.size()];
-        for (int i = 0; i < DStates.size(); i++) {
-            if(DStates.get(i).getIsAcceptable()){
-                arr[i]="q" + DStates.get(i).getID();
-            }
-        }
-        for (int i = 0; i < DStates2.size(); i++) {
-            if(DStates.get(i).getIsAcceptable()){
-                arr2[i]="p" + DStates2.get(i).getID();
-            }
-        }*/
+     
         ArrayList<String> keymoves = new ArrayList<>();
         HashMap<String, State> moves = q0.getAllMoves();
         for (Map.Entry<String, State> entry : moves.entrySet()) {
@@ -146,13 +117,8 @@ public class RegexToDfa {
             }
             return true;
         }
-        //q0.equalRegex(arr, arr2, transitionQ, transitionP);
-
-
-        // for (String x : arr)
-        //     System.out.print("he:"+x + " ");
-
-        // String str = getStr(in);
+       
+       //  String str = getStr(in);
         // boolean acc = false;
         // for (char c : str.toCharArray()) {
         // if (dfat.setCharacter(c)) {

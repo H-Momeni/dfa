@@ -139,7 +139,7 @@ public class State {
 
         // }
 
-    }
+   // }
 
     public void printDFA() {
         Set<State> visited = new HashSet<>();

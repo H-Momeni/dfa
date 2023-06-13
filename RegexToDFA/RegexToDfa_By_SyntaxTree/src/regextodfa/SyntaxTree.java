@@ -133,7 +133,7 @@ public class SyntaxTree {
                 case "?":
                 Object lastpos_q[] = node.getLastPos().toArray();
                 Set<Integer> firstpos_q = node.getFirstPos();
-                for (int i = 0; i < lastpos_q.length; i++) {
+                for (int i = 0; i < lastpos_q.length-2; i++) {
                     int index = (Integer) lastpos_q[i] - 1;
                     if (index >= 0 && index < followPos.length) {
                         followPos[index].addAll(firstpos_q);
